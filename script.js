@@ -35,19 +35,31 @@ const starter = () => {
 
   }
 
+  // sum -------------------------------------------
   for ( i in playerHand ) {
     if ( typeof playerHand[i] === 'number') {
       totalPlayer += playerHand[i]
-    } else if ( playerHand[i] === 'Q' || playerHand[i] === 'K' || playerHand[i] === 'J') {
-      totalPlayer += 10
     }
+  }
+
+  if ( playerHand[0] === 'J' || playerHand[0] === 'K' || playerHand[0] === 'Q' ) {
+    totalPlayer += 10
+  } else if ( playerHand[2] === 'J' || playerHand[2] === 'K' || playerHand[2] === 'Q' ) {
+    totalPlayer += 10
   }
 
   for ( i in opponentHand ) {
     if ( typeof opponentHand[i] === 'number') {
-      totalOponent += playerHand[i]
-    }
+      totalOponent += opponentHand[i]
+    } 
   }
+
+  if ( opponentHand[0] === 'J' || opponentHand[0] === 'K' || opponentHand[0] === 'Q') {
+    totalOponent += 10
+  } else if ( opponentHand[2] === 'J' || opponentHand[2] === 'K' || opponentHand[2] === 'Q' ) {
+    totalOponent += 10
+  }
+  // ----------------------------------------------------
 
   playerHand = playerHand.toString().replaceAll(",", "");
   opponentHand = opponentHand.toString().replaceAll(",", "");
