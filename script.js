@@ -59,6 +59,14 @@ const starter = () => {
   } else if ( opponentHand[2] === 'J' || opponentHand[2] === 'K' || opponentHand[2] === 'Q' ) {
     totalOponent += 10
   }
+
+  if ( typeof playerHand[0] === 'string' && typeof playerHand[2] === 'string' ) {
+    totalPlayer = 20
+  }
+
+  if ( typeof opponentHand[0] === 'string' && typeof opponentHand[2] === 'string' ) {
+    totalOponent = 20
+  }
   // ----------------------------------------------------
 
   playerHand = playerHand.toString().replaceAll(",", "");
@@ -71,6 +79,8 @@ const starter = () => {
 
   console.log(totalPlayer)
   console.log(totalOponent)
+
+  totalPlayer > totalOponent ? console.log('vc ganhou') : console.log('vc perdeu')
 
   // alert(`Sua mão atual : ${playerHand}`)
 };
