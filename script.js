@@ -1,120 +1,159 @@
-const start = () => {
-  let result = 0;
-  let hand = [];
-  let playerHand = [];
-  let playerPoint = 0;
-  let opponentHand = [];
-  let opponentPoint = 0;
-  const drawCard = () => {
-    const cards = [
-      "A",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "J",
-      "Q",
-      "K",
-    ];
-    const suitsArr = ["♦️", "♥️", "♣️", "♠️"];
-    number = cards[Math.floor(Math.random() * 13)];
-    suits = suitsArr[Math.floor(Math.random() * 4)];
+const cards = [
+  "A",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "J",
+  "Q",
+  "K",
+];
+const suits = ["♦️", "♥️", "♣️", "♠️"];
+let card = "";
+let deck = [];
+let deckShuffled = "";
 
-    if (number === "A") {
-      result += 11;
-    } else if (number === "J" || number === "Q" || number === "K") {
-      result += 10;
-    } else {
-      result += +number;
+const deckConstruct = () => {
+  for (i in suits) {
+    for (y in cards) {
+      deck.push(cards[y] + "," + suits[i]);
     }
-
-    hand.push(number + suits);
-
-    return result, hand;
-  };
-
-  drawCard();
-  drawCard();
-
-  while (hand[0] === hand[1]) {
-    hand.slice(0, 0);
-    drawCard();
-    drawCard();
   }
 
-  playerHand = hand;
-
-  playerHand[0].includes("A") && playerHand[1].includes("A")
-    ? (playerPoint = 12)
-    : (playerPoint = result);
-
-  // --------------------------------
-  hand = hand.slice(0, 0);
-  result = 0;
-  drawCard();
-  drawCard();
-
-  while (hand[0] === hand[1]) {
-    hand.slice(0, 0);
-    drawCard();
-    drawCard();
-  }
-
-  opponentHand = hand;
-
-  opponentHand[0].includes("A") && opponentHand[1].includes("A")
-    ? (opponentPoint = 12)
-    : (opponentPoint = result);
-
-    // show your actual hand/points and the opponente hand/points
-  alert((`Player ${playerHand.toString().replaceAll(',', '')} \nTotal: ${playerPoint}`))
-  alert(`Oponente ${opponentHand[0].toString().replaceAll(',', '')}${opponentHand[1].toString().replaceAll(',', '')} \nTotal: ${opponentPoint}`)
-
-    while( opponentPoint < 17 ) {
-        drawCard()
-        opponentHand = hand
-        opponentPoint = result
-    }
-    
-  // -------------------------------------------------
-
-  // check player total
-  let response = "";
-  playerPoint < 22 ? response = prompt("responda").toLowerCase().slice(0, 1) : console.log("fail");
-
-  while ( response === 's' ) {
-      hand = [];
-      result = 0;
-      drawCard();
-      playerHand += hand;
-      playerHand = playerHand.replaceAll(",", "");
-      playerPoint += result;
-      alert(`Player mão final: ${playerHand.toString().replaceAll(',', '')} \nTotal: ${playerPoint}`);
-      response = ''
-      playerPoint < 22 ? response = prompt("responda").toLowerCase().slice(0, 1) : alert("Estouro");
-  }
-
-console.log('-------------------------------')
-
-  alert(`Player mão final: ${playerHand.toString().replaceAll(',', '')} \nTotal: ${playerPoint}`);
-  alert(`Oponente mão final: ${opponentHand.toString().replaceAll(',', '')} \nTotal: ${opponentPoint}`);
-  
-  if (playerPoint === opponentPoint) {
-    alert('Empate')
-  } else if (playerPoint < opponentPoint) {
-    alert('Perdeu')
-  } else {
-    alert('Ganhou')
-  }
+  return (deckShuffled = shuffle(deck));
 };
 
-let startResponse = prompt("Quer jogar?").toLowerCase().slice(0, 1)
-while ( startResponse === 's') {
-  start();
-  startResponse = prompt("Quer jogar denovo?").toLowerCase().slice(0, 1)
-}
+const shuffle = (array) => {
+  let currentIndex = array.length;
+
+  while (currentIndex != 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+  return array;
+};
+
+deckConstruct();
+
+const checkValue = (value, lastResult) => {
+  let sum = 0;
+
+  if (value.length === 2) {
+    if (value.includes("A") && lastResult >= 11) {
+      sum += 1;
+    } else if (value[0] === "A") {
+      sum += 11;
+    } else if (
+      value[0] === "Q" ||
+      value[0] === "K" ||
+      value[0] === "J" ||
+      value[0] === "1"
+    ) {
+      sum += 10;
+    } else {
+      sum += +value[0];
+    }
+  } else {
+    for (let i = 0; i <= 2; i += 2) {
+      if (value[i] === "A") {
+        sum += 11;
+      } else if (
+        value[i] === "Q" ||
+        value[i] === "K" ||
+        value[i] === "J" ||
+        value[i] === "1"
+      ) {
+        sum += 10;
+      } else {
+        sum += +value[i];
+      }
+    }
+  }
+  return sum;
+};
+
+const draw = () => {
+  let card = deckShuffled.pop();
+  return card;
+};
+
+const pcPool = () => {
+  let pcHand = (draw() + "," + draw()).split(",");
+  let hiddenHand = "";
+  hiddenHand += pcHand.join().replaceAll(",", "");
+  let result = checkValue(pcHand);
+  let hiddenResult = checkValue(pcHand);
+
+  while (result < 16) {
+    newCard = draw().split(",");
+    newValue = checkValue(newCard, result);
+    pcHand.push(newCard);
+    result += newValue;
+  }
+
+  console.log("oponente - " + hiddenHand);
+  console.log("total - " + hiddenResult);
+  return [pcHand, result];
+};
+
+const playerPool = () => {
+  let playerHand = (draw() + "," + draw()).split(",");
+  let result = checkValue(playerHand);
+
+  console.log("Player - " + playerHand.join().replaceAll(",", ""));
+  console.log("total - " + result);
+
+  return [playerHand, result];
+};
+
+const game = (pc, p1) => {
+  let pcCards = pc[0].join().replaceAll(",", "");
+  let pcResult = pc[1];
+  let playerCards = p1[0].join().replaceAll(",", "");
+  let playerResult = p1[1];
+
+  let response = prompt("Draw more one");
+
+  while (response === "s" && playerResult <= 21) {
+    let newCard = draw().split(",");
+    let newValue = checkValue(newCard, playerResult);
+    playerCards += newCard.join().replaceAll(",", "");
+    playerResult += newValue;
+
+    console.log("Player - " + playerCards);
+    console.log("total - " + playerResult);
+
+    response = prompt("Draw more one?");
+  }
+
+  if (pcResult >= 22 && playerResult <= 21) {
+    console.log("Player ganhou");
+  } else if (pcResult <= 21 && playerResult >= 22) {
+    console.log("Pc ganho");
+  } else if (pcResult >= 22 && playerResult >= 22) {
+    console.log("Empate");
+  } else if (playerResult > pcResult && playerResult <= 21) {
+    console.log("Player ganhou");
+  } else if (pcResult > playerResult && pcResult <= 21) {
+    console.log("Pc ganho");
+  } else {
+    console.log("Empate");
+  }
+
+  console.log("pc hand - " + pcCards);
+  console.log("pc pontos - " + pcResult);
+  console.log("player hand - " + playerCards);
+  console.log("player pontos - " + playerResult);
+};
+
+game(pcPool(), playerPool());
